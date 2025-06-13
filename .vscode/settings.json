@@ -1,0 +1,13 @@
+{
+    "Lua.diagnostics.globals": [
+        "gm",
+        "mods",
+        "log",
+        "code",
+        "memory",
+        "xmm0",
+        "double",
+        "paths",
+        "path"
+    ]
+}
