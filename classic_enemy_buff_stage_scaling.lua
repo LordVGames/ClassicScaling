@@ -64,11 +64,8 @@ function(self, other, result, args)
 
     -- when entering boar beach
     -- yes there's no enemy_buff addition because 2013 hopoo was quirky like that
-    -- they also made the stage remove 2 from stages_passed because ??????
-    -- hey it's in the UMT code for the game don't ask me
     if result.value == 10 then
-        --log.debug("ENTERING boar beach - doing some weird stuff!!!")
-        director.stages_passed = director.stages_passed - 2
+        --log.debug("ENTERING boar beach - NOT adding to enemy_buff!!!")
         return
     end
 
