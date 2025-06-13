@@ -16,7 +16,7 @@ The following things are changed:
 - Leaving stage 4/5: + 0.45
 - Entering contact light: + 0.45
 - - (not in addition to previous numbers)
-- Leaving boar beach: Removes 2 from the internal "Stages passed" counter
+- Entering boar beach: No addition to enemy strength, removes 2 from the internal "Stages passed" counter
 - - RoR1 game code says it does this. Not sure if it has any real effects.
 
 ## Stage credits:
