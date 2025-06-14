@@ -1,6 +1,6 @@
 # Classic Scaling
 
-Brings back the old values for some parts of the game's scaling, making RoR Returns' difficulty closer to RoR1's.
+Brings back the old values for some parts of the game's scaling, making RoR Returns' difficulty closer to RoR1's. Each section of changes can be configured on/off, with every section being on by default. You can do change the config options in-game by looking for the mod under the `Config` tab at the top of the ImGui menu (the default key to open it is `Insert`).
 
 The following things are changed:
 

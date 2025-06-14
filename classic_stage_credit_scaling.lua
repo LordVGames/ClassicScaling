@@ -14,6 +14,10 @@ local initial_stage_credits_mult_pointer = memory.scan_pattern("F2 0F 10 15 52 3
 -- adding 8 to go past the "xmm2, cs:qword_141C25B40" line
 memory.dynamic_hook_mid("edit_initial_stage_credits_mult", {"xmm2"}, {"double"}, 0, initial_stage_credits_mult_pointer:add(8),
 function(args)
+    if not ConfigEntry_ClassicLootAmounts:get() then
+        return
+    end
+
     args[1]:set(1)
 end)
 
@@ -29,5 +33,9 @@ local multiplayer_stage_credits_mult_pointer = memory.scan_pattern("F2 0F 10 3D 
 -- adding 8 to go past the "movsd   xmm7, cs:qword_141C25A88" line
 memory.dynamic_hook_mid("edit_multiplayer_stage_credits_mult", {"xmm7"}, {"double"}, 0, multiplayer_stage_credits_mult_pointer:add(8),
 function(args)
+    if not ConfigEntry_ClassicLootAmounts:get() then
+        return
+    end
+
     args[1]:set(0.5)
 end)

@@ -2,7 +2,9 @@ mods["RoRRModdingToolkit-RoRR_Modding_Toolkit"].auto(true)
 PATH = _ENV["!plugins_mod_folder_path"]
 NAMESPACE = "classic_scaling"
 
+
 local init = function ()
+    require("config.lua")
     require("classic_elite_stat_buffs.lua")
     require("classic_enemy_buff_stage_scaling.lua")
     require("classic_stage_credit_scaling.lua")

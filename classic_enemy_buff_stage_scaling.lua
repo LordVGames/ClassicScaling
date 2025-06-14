@@ -12,18 +12,19 @@ local before_enemy_buff_add_pointer = memory.scan_pattern("48 8D 55 88 48 8B 8D 
 
 
 -- add 4 is done to skip past the "lea rdx" line
--- this hook also happens when transitioning to a stage but BEFORE the stage actually transitions
--- so the stage name/stages passed will be of the previous stage
+-- this hook happens when transitioning to a stage but BEFORE the stage actually transitions
 memory.dynamic_hook_mid("remove_returns_per_stage_difficulty_scaling", {"rdx"}, {"RValue*"}, 0, before_enemy_buff_add_pointer:add(4),
 function(args)
+    if not ConfigEntry_ClassicEnemyBuffStageScaling:get() then
+        return
+    end
+    
     -- fuck off
     args[1].value = 0
 end)
 
 
-
-
--- ror1 chose the enemy_buff number depending on the stage name, but all the stages that shared a stage # had the same enemy_buff additions anyways
+-- ror1 chose the enemy_buff number depending on the stage name, but all the stages that shared a stage # had the same enemy_buff additions anyways.
 -- idk how rorml handled modded stages (and especially ss1 with it's special stages) but if there's some special handling i'll add it later
 local classic_enemy_buff_per_stage =
 {
@@ -37,9 +38,16 @@ local classic_enemy_buff_per_stage =
 
 -- have to check for specific stages in here beacause the memory hook is too early to get the new stage id
 -- this happens after our memory hook but it's STILL not late enough for the stage to actually change
+-- so the stage name/stages passed will be of the previous stage
 -- luckily the result.value is the id the next stage, so we can use that
 gm.post_script_hook(gm.constants.stage_roll_next,
 function(self, other, result, args)
+    if not ConfigEntry_ClassicEnemyBuffStageScaling:get() then
+        return
+    end
+
+    
+    --log.debug("stage_roll_next")
     -- avoid doing this on menus
     if Global.level_name == "" then
         return
@@ -62,12 +70,8 @@ function(self, other, result, args)
     end
 
 
-    -- when entering boar beach
-    -- yes there's no enemy_buff addition because 2013 hopoo was quirky like that
-    if result.value == 10 then
-        --log.debug("ENTERING boar beach - NOT adding to enemy_buff!!!")
-        return
-    end
+    -- can't check for boar beach here so we can't do any special handling
+    -- but we don't need to since rorr's existing functionality mixed with this mod leads to classic functionality anyways
 
 
     local stage_number_in_loop = math.fmod(director.stages_passed + 1, 5)
