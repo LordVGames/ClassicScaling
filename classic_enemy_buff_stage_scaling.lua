@@ -18,7 +18,7 @@ function(args)
     if not ConfigEntry_ClassicEnemyBuffStageScaling:get() then
         return
     end
-    
+
     -- fuck off
     args[1].value = 0
 end)
@@ -36,6 +36,7 @@ local classic_enemy_buff_per_stage =
 }
 
 
+local sync_new_enemy_buff_packet = Packet.new()
 -- have to check for specific stages in here beacause the memory hook is too early to get the new stage id
 -- this happens after our memory hook but it's STILL not late enough for the stage to actually change
 -- so the stage name/stages passed will be of the previous stage
@@ -46,7 +47,7 @@ function(self, other, result, args)
         return
     end
 
-    
+
     --log.debug("stage_roll_next")
     -- avoid doing this on menus
     if Global.level_name == "" then
@@ -60,28 +61,46 @@ function(self, other, result, args)
         log.warning("director was NIL in stage_roll_next - not adding to enemy_buff!")
         return
     end
-    
-    
+
+
+    local enemy_buff_add
     -- when entering contact light
     -- it's handled separately here since you can go here any stage post-loop and we need to avoid adding the wrong number to enemy_buff
     if result.value == 9 then
-        director.enemy_buff = director.enemy_buff + 0.45
+        enemy_buff_add = 0.45
         return
+    else
+        -- don't need to check for boar beach since rorr's existing functionality mixed with this mod leads to classic functionality regardless
+        local stage_number_in_loop = math.fmod(director.stages_passed + 1, 5)
+        -- mfw arrays start at 1 so i can't have a value in a table starting at 0
+        if stage_number_in_loop == 0 then
+            stage_number_in_loop = 5
+        end
+        enemy_buff_add = classic_enemy_buff_per_stage[stage_number_in_loop]
     end
 
-
-    -- can't check for boar beach here so we can't do any special handling
-    -- but we don't need to since rorr's existing functionality mixed with this mod leads to classic functionality anyways
-
-
-    local stage_number_in_loop = math.fmod(director.stages_passed + 1, 5)
-    -- mfw arrays start at 1 so i can't have a value in a table starting at 0
-    if stage_number_in_loop == 0 then
-        stage_number_in_loop = 5
+    local sync_new_enemy_buff_message = sync_new_enemy_buff_packet:message_begin()
+    if gm._mod_net_isHost() and gm._mod_net_isOnline() then
+        sync_new_enemy_buff_message:write_float(enemy_buff_add)
+        sync_new_enemy_buff_message:send_to_all()
     end
+
     --log.debug("stages passed is " .. director.stages_passed)
     --log.debug("stage_number_in_loop is " .. stage_number_in_loop)
     --log.debug("before: " .. director.enemy_buff)
-    director.enemy_buff = director.enemy_buff + classic_enemy_buff_per_stage[stage_number_in_loop]
+    director.enemy_buff = director.enemy_buff + enemy_buff_add
     --log.debug("after: " .. director.enemy_buff)
+end)
+
+sync_new_enemy_buff_packet:onReceived(function(sync_new_enemy_buff_message)
+    local director = GM._mod_game_getDirector()
+    if director == nil then
+        log.warning("CLIENT director was NIL in stage_roll_next - not adding to enemy_buff!")
+        return
+    end
+
+    local enemy_buff_add = sync_new_enemy_buff_message:read_float()
+    --log.debug("CLIENT before: " .. director.enemy_buff)
+    director.enemy_buff = director.enemy_buff + enemy_buff_add
+    --log.debug("CLIENT after: " .. director.enemy_buff)
 end)

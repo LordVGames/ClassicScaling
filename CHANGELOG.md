@@ -1,3 +1,7 @@
+## v1.1.2
+
+- Fixed multiplayer clients not receiving the new `enemy_buff` value from stage change, which caused various issues
+
 ### v1.1.1
 
 - Forgot to remove the bit about boar beach from the readme lmao
