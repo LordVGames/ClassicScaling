@@ -1,3 +1,7 @@
+## v1.1.3
+
+- Fixed mod for RoRR v1.1.0
+
 ## v1.1.2
 
 - Fixed multiplayer clients not receiving the new `enemy_buff` value from stage change, which caused various issues

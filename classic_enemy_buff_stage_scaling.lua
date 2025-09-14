@@ -4,11 +4,11 @@
 -- in the function "gml_Script_stage_goto_next_gml_Object_oDirectorControl_Create_0"
 --[[
 scanning for these:
-141281902 48 8D 55 88                                   lea     rdx, [rbp+0B0h+stages_passed_3]
-141281906 48 8B 8D C0 00 00 00                          mov     rcx, [rbp+0B0h+gamemode_check]
-14128190D E8 6E D5 DD FE                                call    RValue_Add
+140F5BC4B 48 8D 55 10                                   lea     rdx, [rbp+0A0h+stages_passed_3]     << var_90
+140F5BC4F 49 8B CD                                      mov     rcx, [rbp+0B0h+gamemode_check]      << r13
+140F5BC52 E8 39 E5 10 FF                                call    RValue_Add
 ]]
-local before_enemy_buff_add_pointer = memory.scan_pattern("48 8D 55 88 48 8B 8D C0 00 00 00 E8 6E D5 DD FE")
+local before_enemy_buff_add_pointer = memory.scan_pattern("48 8D 55 10 49 8B CD E8 39 E5 10 FF")
 
 
 -- add 4 is done to skip past the "lea rdx" line
