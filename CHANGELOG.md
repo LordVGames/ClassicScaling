@@ -1,3 +1,7 @@
+## v1.1.4
+
+- Fixed a value when getting the classic enemy_buff value being nil
+
 ## v1.1.3
 
 - Fixed mod for RoRR v1.1.0

@@ -46,9 +46,9 @@ function(self, other, result, args)
     if not ConfigEntry_ClassicEnemyBuffStageScaling:get() then
         return
     end
-
-
     --log.debug("stage_roll_next")
+
+
     -- avoid doing this on menus
     if Global.level_name == "" then
         return
@@ -64,6 +64,7 @@ function(self, other, result, args)
 
 
     local enemy_buff_add
+    local stage_number_in_loop
     -- when entering contact light
     -- it's handled separately here since you can go here any stage post-loop and we need to avoid adding the wrong number to enemy_buff
     if result.value == 9 then
@@ -71,12 +72,14 @@ function(self, other, result, args)
         return
     else
         -- don't need to check for boar beach since rorr's existing functionality mixed with this mod leads to classic functionality regardless
-        local stage_number_in_loop = math.fmod(director.stages_passed + 1, 5)
+        stage_number_in_loop = math.fmod(director.stages_passed + 1, 5)
         -- mfw arrays start at 1 so i can't have a value in a table starting at 0
         if stage_number_in_loop == 0 then
             stage_number_in_loop = 5
         end
         enemy_buff_add = classic_enemy_buff_per_stage[stage_number_in_loop]
+        --log.debug("stage_number_in_loop is " .. stage_number_in_loop)
+        --log.debug("stages passed is " .. director.stages_passed)
     end
 
     local sync_new_enemy_buff_message = sync_new_enemy_buff_packet:message_begin()
@@ -85,8 +88,6 @@ function(self, other, result, args)
         sync_new_enemy_buff_message:send_to_all()
     end
 
-    --log.debug("stages passed is " .. director.stages_passed)
-    --log.debug("stage_number_in_loop is " .. stage_number_in_loop)
     --log.debug("before: " .. director.enemy_buff)
     director.enemy_buff = director.enemy_buff + enemy_buff_add
     --log.debug("after: " .. director.enemy_buff)

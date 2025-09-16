@@ -1,6 +1,6 @@
 {
     "name": "ClassicScaling",
-    "version_number": "1.1.3",
+    "version_number": "1.1.4",
     "website_url": "https://github.com/LordVGames/ClassicScaling",
     "description": "Brings back the old RoR1 values for enemy strength scaling on stage change, map loot amount scaling, and elite stat buffs. Configurable!",
     "dependencies": [
