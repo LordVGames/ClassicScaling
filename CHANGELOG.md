@@ -1,3 +1,8 @@
+## v2.0.0
+
+- Added classic scaling for the director's points/credits scaling and the enemy_buff time scaling (the latter part only really affects multiplayer)
+- Hopefully future-proofed the mod enough so the game won't die when a scanned memory address isn't found
+
 ## v1.1.4
 
 - Fixed a value when getting the classic enemy_buff value being nil

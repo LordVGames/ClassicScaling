@@ -1,8 +1,8 @@
 {
     "name": "ClassicScaling",
-    "version_number": "1.1.4",
+    "version_number": "2.0.0",
     "website_url": "https://github.com/LordVGames/ClassicScaling",
-    "description": "Brings back the old RoR1 values for enemy strength scaling on stage change, map loot amount scaling, and elite stat buffs. Configurable!",
+    "description": "Brings back the old RoR1 values of the game's scaling for enemy spawn rates, enemy strength, and map loot. Configurable!",
     "dependencies": [
         "ReturnOfModding-ReturnOfModding-1.0.74",
         "RoRRModdingToolkit-RoRR_Modding_Toolkit-1.2.19",

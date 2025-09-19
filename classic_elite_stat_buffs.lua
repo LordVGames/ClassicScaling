@@ -1,5 +1,7 @@
 ---@diagnostic disable: undefined-field, param-type-mismatch
--- All of these addresses are in found in "gml_Script_recalculate_stats" in the database
+-- All hooks in here are in the function "gml_Script_recalculate_stats"
+
+
 
 
 local recalculate_stats_pointer = gm.get_script_function_address(gm.constants.recalculate_stats)
@@ -42,3 +44,8 @@ function(args)
     -- ror1 mult is 1.7, rorr mult is 1.9
     args[1]:set(1.7)
 end)
+
+
+
+
+return false

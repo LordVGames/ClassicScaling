@@ -1,14 +1,21 @@
 ---@diagnostic disable: undefined-field, param-type-mismatch
+-- All hooks in here are in the function "gml_Script_stage_goto_next_gml_Object_oDirectorControl_Create_0"
 
 
--- in the function "gml_Script_stage_goto_next_gml_Object_oDirectorControl_Create_0"
+
+
 --[[
-scanning for these:
-140F5BC4B 48 8D 55 10                                   lea     rdx, [rbp+0A0h+stages_passed_3]     << var_90
-140F5BC4F 49 8B CD                                      mov     rcx, [rbp+0B0h+gamemode_check]      << r13
-140F5BC52 E8 39 E5 10 FF                                call    RValue_Add
+-- going to before these lines --
+
+140F5BC4B                   lea     rdx, [rbp+0A0h+var_90]      (48 8D 55 10)
+140F5BC4F                   mov     rcx, [rbp+0B0h+r13]         (49 8B CD)
+140F5BC52                   call    RValue_Add                  (E8 39 E5 10 FF)
 ]]
 local before_enemy_buff_add_pointer = memory.scan_pattern("48 8D 55 10 49 8B CD E8 39 E5 10 FF")
+if (before_enemy_buff_add_pointer:is_null()) then
+    log.error("COULD NOT FIND MEMORY ADDRESS FOR POINTER \"before_enemy_buff_add_pointer\", NOT DOING HOOK \"remove_returns_per_stage_difficulty_scaling\"!!!", 1)
+    return
+end
 
 
 -- add 4 is done to skip past the "lea rdx" line
@@ -24,6 +31,9 @@ function(args)
 end)
 
 
+
+
+
 -- ror1 chose the enemy_buff number depending on the stage name, but all the stages that shared a stage # had the same enemy_buff additions anyways.
 -- idk how rorml handled modded stages (and especially ss1 with it's special stages) but if there's some special handling i'll add it later
 local classic_enemy_buff_per_stage =
@@ -34,6 +44,8 @@ local classic_enemy_buff_per_stage =
     [4] = 0.45,
     [5] = 0.45
 }
+
+
 
 
 local sync_new_enemy_buff_packet = Packet.new()
@@ -56,7 +68,7 @@ function(self, other, result, args)
     --log.debug("level name is " .. Global.level_name)
     --log.debug("level ID is " .. Global.stage_id)
     --log.debug("result.value (new level ID) is " .. result.value)
-    local director = GM._mod_game_getDirector()
+    local director = gm._mod_game_getDirector()
     if director == nil then
         log.warning("director was NIL in stage_roll_next - not adding to enemy_buff!")
         return
@@ -93,8 +105,9 @@ function(self, other, result, args)
     --log.debug("after: " .. director.enemy_buff)
 end)
 
+
 sync_new_enemy_buff_packet:onReceived(function(sync_new_enemy_buff_message)
-    local director = GM._mod_game_getDirector()
+    local director = gm._mod_game_getDirector()
     if director == nil then
         log.warning("CLIENT director was NIL in stage_roll_next - not adding to enemy_buff!")
         return
@@ -105,3 +118,8 @@ sync_new_enemy_buff_packet:onReceived(function(sync_new_enemy_buff_message)
     director.enemy_buff = director.enemy_buff + enemy_buff_add
     --log.debug("CLIENT after: " .. director.enemy_buff)
 end)
+
+
+
+
+return false

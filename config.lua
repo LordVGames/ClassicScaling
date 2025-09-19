@@ -8,12 +8,6 @@ CONFIG_SECTION = "Options"
 MyConfig = config.config_file:new(FULL_PATH, true)
 
 
-ConfigEntry_ClassicEliteStats = MyConfig:bind(
-    CONFIG_SECTION,
-    "Enable classic elite stats",
-    true,
-    "Nerfs the multipliers for elite HP, damage, and honor elite HP back to RoR1's numbers."
-)
 ConfigEntry_ClassicLootAmounts = MyConfig:bind(
     CONFIG_SECTION,
     "Enable classic loot amounts and amount scaling",
@@ -26,3 +20,26 @@ ConfigEntry_ClassicEnemyBuffStageScaling = MyConfig:bind(
     true,
     "Makes the number for the HP & damage increase that enemies get after every stage no longer exponentially increase every stage, and instead be a one of few numbers that do not increase per stage."
 )
+ConfigEntry_ClassicEnemyBuffTimeScaling = MyConfig:bind(
+    CONFIG_SECTION,
+    "Enable classic enemy strength scaling over time",
+    true,
+    "Makes the numbers for the HP & damage increase that enemies get every minute the same as they were in RoR1"
+)
+ConfigEntry_ClassicDirectorPointScaling = MyConfig:bind(
+    CONFIG_SECTION,
+    "Enable classic director point/credit scaling",
+    true,
+    "Changes the formula for how fast the director gains points/credits to spend on enemies to be like RoR1's formula."
+)
+ConfigEntry_ClassicEliteStats = MyConfig:bind(
+    CONFIG_SECTION,
+    "Enable classic elite stats",
+    true,
+    "Nerfs the multipliers for elite HP, damage, and honor elite HP back to RoR1's numbers."
+)
+
+
+
+
+return false
