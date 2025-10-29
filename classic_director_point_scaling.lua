@@ -22,7 +22,7 @@ end
 -- adding 8 to go past the "movsd   xmm0, cs:qword_14203F2D8" line
 memory.dynamic_hook_mid("replace_director_points_formula_bad_mult", {"xmm0"}, {"double"}, 0, director_points_formula_bad_mult_pointer:add(8),
 function(args)
-    if not ConfigEntry_ClassicDirectorPointScaling:get() then
+    if not settings.classicDirectorPointScaling then
         return
     end
 
@@ -51,7 +51,7 @@ end
 -- adding 8 to go past the "movsd   xmm1, cs:qword_14203F1F0" line
 memory.dynamic_hook_mid("replace_director_points_formula_bad_add", {"xmm1"}, {"double"}, 0, director_points_formula_bad_add_pointer:add(8),
 function(args)
-    if not ConfigEntry_ClassicDirectorPointScaling:get() then
+    if not settings.classicDirectorPointScaling then
         return
     end
 

@@ -23,7 +23,7 @@ end
 -- adding 5 to go past the "lea     rdx, [rsp+3B0h+var_378.flags]" line
 memory.dynamic_hook_mid("replace_enemy_buff_time_scale_formula_result", {"rdx"}, {"RValue*"}, 0, enemy_buff_time_scale_formula_result_pointer:add(5),
 function(args)
-    if not ConfigEntry_ClassicEnemyBuffTimeScaling:get() then
+    if not settings.classicEnemyBuffTimeScaling then
         return
     end
 

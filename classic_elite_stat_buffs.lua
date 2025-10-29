@@ -13,7 +13,7 @@ local recalculate_stats_pointer = gm.get_script_function_address(gm.constants.re
 -- .value is ALWAYS nil here due to the xmm# being a "sol.lua::memory::value_wrapper_t"
 memory.dynamic_hook_mid("edit_honor_elite_hp_mult", {"xmm0"}, {"double"}, 0, recalculate_stats_pointer:add(0x14C4),
 function(args)
-    if not ConfigEntry_ClassicEliteStats:get() then
+    if not settings.classicEliteStats then
         return
     end
 
@@ -25,7 +25,7 @@ end)
 -- 0x14DF sends the pointer below the line "movsd   xmm0, cs:qword_14203F438"
 memory.dynamic_hook_mid("edit_normal_elite_hp_mult", {"xmm0"}, {"double"}, 0, recalculate_stats_pointer:add(0x14DF),
 function(args)
-    if not ConfigEntry_ClassicEliteStats:get() then
+    if not settings.classicEliteStats then
         return
     end
 
@@ -37,7 +37,7 @@ end)
 -- 0x156A sends the pointer below the line "movsd   xmm0, cs:qword_141C25C68"
 memory.dynamic_hook_mid("edit_elite_damage_mult", {"xmm0"}, {"double"}, 0, recalculate_stats_pointer:add(0x156A),
 function(args)
-    if not ConfigEntry_ClassicEliteStats:get() then
+    if not settings.classicEliteStats then
         return
     end
 

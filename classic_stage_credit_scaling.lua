@@ -20,7 +20,7 @@ end
 -- adding 8 to go past the "movsd   xmm2, cs:qword_14203F2A8" line
 memory.dynamic_hook_mid("edit_initial_stage_credits_mult", {"xmm2"}, {"double"}, 0, initial_stage_credits_mult_pointer:add(8),
 function(args)
-    if not ConfigEntry_ClassicLootAmounts:get() then
+    if not settings.classicLootAmounts then
         return
     end
 
@@ -47,7 +47,7 @@ end
 -- adding 8 to go past the "movsd   xmm7, cs:qword_141C25A88" line
 memory.dynamic_hook_mid("edit_multiplayer_stage_credits_mult", {"xmm7"}, {"double"}, 0, multiplayer_stage_credits_mult_pointer:add(8),
 function(args)
-    if not ConfigEntry_ClassicLootAmounts:get() then
+    if not settings.classicLootAmounts then
         return
     end
 

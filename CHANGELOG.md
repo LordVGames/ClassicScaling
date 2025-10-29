@@ -1,3 +1,7 @@
+## v2.0.1
+
+- Mod now uses ReturnsAPI
+
 ## v2.0.0
 
 - Added classic scaling for the director's points/credits scaling and the enemy_buff time scaling (the latter part only really affects multiplayer)

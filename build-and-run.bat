@@ -6,9 +6,13 @@ start /wait taskkill /f /im "Risk of Rain Returns.exe"
 if not exist "%profilePluginsFolder%%thunderstoreName%" (
     mkdir "%profilePluginsFolder%%thunderstoreName%"
 )
+if not exist "%profilePluginsFolder%%thunderstoreName%\language" (
+    mkdir "%profilePluginsFolder%%thunderstoreName%\language"
+)
 
 copy /y "%~dp0*.lua" "%profilePluginsFolder%%thunderstoreName%"
 copy /y "%~dp0manifest.json" "%profilePluginsFolder%%thunderstoreName%"
+copy /y "%~dp0language\*" "%profilePluginsFolder%%thunderstoreName%\language"
 
 "C:\Program Files\7-Zip\7z.exe" a -tzip "%thunderstoreName%.zip" "%~dp0*" -xr!.vscode -xr!.git -x!*.zip -x!*.bat -x!*.pdn -x!LICENSE -x!.gitattributes
 

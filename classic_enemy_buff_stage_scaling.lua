@@ -22,7 +22,7 @@ end
 -- this hook happens when transitioning to a stage but BEFORE the stage actually transitions
 memory.dynamic_hook_mid("remove_returns_per_stage_difficulty_scaling", {"rdx"}, {"RValue*"}, 0, before_enemy_buff_add_pointer:add(4),
 function(args)
-    if not ConfigEntry_ClassicEnemyBuffStageScaling:get() then
+    if not settings.classicEnemyBuffStageScaling then
         return
     end
 
@@ -48,14 +48,14 @@ local classic_enemy_buff_per_stage =
 
 
 
-local sync_new_enemy_buff_packet = Packet.new()
+local sync_classic_enemy_buff_packet = Packet.new("sync_classic_enemy_buff")
 -- have to check for specific stages in here beacause the memory hook is too early to get the new stage id
 -- this happens after our memory hook but it's STILL not late enough for the stage to actually change
 -- so the stage name/stages passed will be of the previous stage
 -- luckily the result.value is the id the next stage, so we can use that
 gm.post_script_hook(gm.constants.stage_roll_next,
 function(self, other, result, args)
-    if not ConfigEntry_ClassicEnemyBuffStageScaling:get() then
+    if not settings.classicEnemyBuffStageScaling then
         return
     end
     --log.debug("stage_roll_next")
@@ -94,10 +94,9 @@ function(self, other, result, args)
         --log.debug("stages passed is " .. director.stages_passed)
     end
 
-    local sync_new_enemy_buff_message = sync_new_enemy_buff_packet:message_begin()
-    if gm._mod_net_isHost() and gm._mod_net_isOnline() then
-        sync_new_enemy_buff_message:write_float(enemy_buff_add)
-        sync_new_enemy_buff_message:send_to_all()
+    local sync_classic_enemy_buff_message = sync_classic_enemy_buff_packet:message_begin()
+    if Net.host then
+        sync_classic_enemy_buff_message:send_to_all(enemy_buff_add)
     end
 
     --log.debug("before: " .. director.enemy_buff)
@@ -106,19 +105,24 @@ function(self, other, result, args)
 end)
 
 
-sync_new_enemy_buff_packet:onReceived(function(sync_new_enemy_buff_message)
-    local director = gm._mod_game_getDirector()
-    if director == nil then
-        log.warning("CLIENT director was NIL in stage_roll_next - not adding to enemy_buff!")
-        return
+sync_classic_enemy_buff_packet:set_serializers(
+    function(buffer, enemy_buff_add_value)
+        buffer:write_float(enemy_buff_add_value)
+    end,
+
+    function(buffer, player)
+       local director = gm._mod_game_getDirector()
+        if director == nil then
+            log.warning("CLIENT director was NIL in stage_roll_next - not adding to enemy_buff!")
+            return
+        end
+
+        local enemy_buff_add = buffer:read_float()
+        --log.debug("CLIENT before: " .. director.enemy_buff)
+        director.enemy_buff = director.enemy_buff + enemy_buff_add
+        --log.debug("CLIENT after: " .. director.enemy_buff) 
     end
-
-    local enemy_buff_add = sync_new_enemy_buff_message:read_float()
-    --log.debug("CLIENT before: " .. director.enemy_buff)
-    director.enemy_buff = director.enemy_buff + enemy_buff_add
-    --log.debug("CLIENT after: " .. director.enemy_buff)
-end)
-
+)
 
 
 

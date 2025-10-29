@@ -1,7 +1,11 @@
 ---@diagnostic disable: lowercase-global
-mods["RoRRModdingToolkit-RoRR_Modding_Toolkit"].auto(true)
+
+local NAMESPACE = "classicScaling"
+mods["ReturnsAPI-ReturnsAPI"].auto{
+    namespace = NAMESPACE,
+    mp = true
+}
 PATH = _ENV["!plugins_mod_folder_path"]
-NAMESPACE = "classic_scaling"
 
 
 local file_name_list = {
@@ -14,6 +18,12 @@ local file_name_list = {
     "classic_elite_stat_buffs.lua"
 }
 local init = function ()
+    hotload = true
+    modOptions = ModOptions.new(NAMESPACE)
+    settings = {}
+    file = TOML.new()
+
+
     for i in pairs(file_name_list) do
         -- this mod's files return false if they successfully do all their hooks, so if one fails a hook and stops itself then it'll return true by default
         -- if one file says it's hooks didn't work then that likely means all hooks are fucked, so then the mod will stop loading and hooking any further
@@ -23,11 +33,13 @@ local init = function ()
         end
     end
 
-    HOTLOAD = true
+
+    local t = file:read()
+    if t then settings = t end
 end
-Initialize(init)
 
 
-if HOTLOAD then
+Initialize.add(init)
+if hotload then
     init()
 end
