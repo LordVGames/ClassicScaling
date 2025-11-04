@@ -94,9 +94,8 @@ function(self, other, result, args)
         --log.debug("stages passed is " .. director.stages_passed)
     end
 
-    local sync_classic_enemy_buff_message = sync_classic_enemy_buff_packet:message_begin()
     if Net.host then
-        sync_classic_enemy_buff_message:send_to_all(enemy_buff_add)
+        sync_classic_enemy_buff_packet:send_to_all(enemy_buff_add)
     end
 
     --log.debug("before: " .. director.enemy_buff)

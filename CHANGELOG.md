@@ -1,3 +1,7 @@
+## v2.0.2
+
+- Fixed sync packet for enemy buff on stage change erroring, even in singeplayer
+
 ## v2.0.1
 
 - Mod now uses ReturnsAPI
