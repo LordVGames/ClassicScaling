@@ -1,3 +1,7 @@
+## v2.0.3
+
+- Fixed enemy buff being added to when restarting a run without exiting to menu
+
 ## v2.0.2
 
 - Fixed sync packet for enemy buff on stage change erroring, even in singeplayer
