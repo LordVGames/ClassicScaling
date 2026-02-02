@@ -1,3 +1,9 @@
+## v2.0.4
+
+- Internal refactor, replaced all mid hooks with normal hooks and a few callbacks
+- - Mod should cause less random problems now, and if it does it's easier to diagnose now
+- Fixed contact light's classic enemy_buff value never being added
+
 ## v2.0.3
 
 - Fixed enemy buff being added to when restarting a run without exiting to menu

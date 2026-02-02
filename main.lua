@@ -1,5 +1,6 @@
 ---@diagnostic disable: lowercase-global
 
+
 local NAMESPACE = "classicScaling"
 mods["ReturnsAPI-ReturnsAPI"].auto{
     namespace = NAMESPACE,
@@ -14,7 +15,6 @@ local file_name_list = {
     "classic_enemy_buff_stage_scaling.lua",
     "classic_enemy_buff_time_scaling.lua",
     "classic_director_point_scaling.lua",
-    -- keep this last one at the bottom because this hooks in a way where we can't check if the hook location is valid before hooking
     "classic_elite_stat_buffs.lua"
 }
 local init = function ()
@@ -25,12 +25,7 @@ local init = function ()
 
 
     for i in pairs(file_name_list) do
-        -- this mod's files return false if they successfully do all their hooks, so if one fails a hook and stops itself then it'll return true by default
-        -- if one file says it's hooks didn't work then that likely means all hooks are fucked, so then the mod will stop loading and hooking any further
-        if require(file_name_list[i]) then
-            log.warning("Cancelling any further mod loading due to an error during the hooking process.")
-            break
-        end
+        require(file_name_list[i])
     end
 
 
@@ -42,4 +37,78 @@ end
 Initialize.add(init)
 if hotload then
     init()
+end
+
+
+
+
+Director = nil
+Current_Difficulty = nil
+Honor_Artifact = nil
+
+
+local reset_variables_on_run_start = Packet.new("reset_variables_on_run_start")
+local reset_variables = function ()
+    if Global.level_name == "" then
+        Director = nil
+        Current_Difficulty = nil
+        Honor_Artifact = nil
+
+        if Net.host then
+            reset_variables_on_run_start:send_to_all()
+        end
+    end
+end
+
+
+-- stupid shit
+reset_variables_on_run_start:set_serializers(
+function(buffer)
+end,
+
+function(buffer)
+    reset_variables()
+end)
+
+
+-- resetting global values when leaving run
+Hook.add_pre(gm.constants.stage_roll_next,
+function(self, other, result, args)
+    reset_variables()
+end)
+
+
+Ensure_Director_Active = function ()
+    if Director == nil then
+        Director = gm._mod_game_getDirector()
+        if Director == nil then
+            log.error("Could not find director!", 1)
+            return false
+        end
+    end
+    return true
+end
+
+
+Ensure_Current_Difficulty = function ()
+    if Current_Difficulty == nil then
+        Current_Difficulty = Difficulty.wrap(gm._mod_game_getDifficulty())
+        if Current_Difficulty == nil then
+            log.error("Somehow couldn't get difficulty???", 1)
+            return false
+        end
+    end
+    return true
+end
+
+
+Ensure_Honor_Artifact = function ()
+    if Honor_Artifact == nil then
+        Honor_Artifact = Artifact.find("honor", "ror")
+        if Honor_Artifact == nil then
+            log.error("Could not find honor artifact!", 1)
+            return false
+        end
+    end
+    return true
 end

@@ -15,5 +15,8 @@
         "ImGuiCol",
         "colors",
         "config"
+    ],
+    "Lua.diagnostics.disable": [
+        "inject-field"
     ]
 }

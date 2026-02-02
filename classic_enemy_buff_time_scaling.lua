@@ -3,48 +3,77 @@
 
 
 
-
---[[
-replacing the finished enemy_buff formula result with RoR1's result (it didn't use much of a formula)
-
--- going to before these lines --
-
-140F63B35                 lea     rdx, [rsp+3B0h+var_378.flags]     (48 8D 54  24 40)
-140F63B3A                 mov     rcx, r14                          (49 8B CE)
-140F63B3D                 call    RValue_Add                        (E8 4E 66 10 FF)
-]]
-local enemy_buff_time_scale_formula_result_pointer = memory.scan_pattern("48 8D 54 24 40 49 8B CE E8 4E 66 10 FF")
-if (enemy_buff_time_scale_formula_result_pointer:is_null()) then
-    log.error("COULD NOT FIND MEMORY ADDRESS FOR POINTER \"enemy_buff_time_scale_formula_result_pointer\", NOT DOING HOOK \"replace_enemy_buff_time_scale_formula_result\"!!!", 1)
-    return
-end
+local old_enemy_buff = 0
 
 
--- adding 5 to go past the "lea     rdx, [rsp+3B0h+var_378.flags]" line
-memory.dynamic_hook_mid("replace_enemy_buff_time_scale_formula_result", {"rdx"}, {"RValue*"}, 0, enemy_buff_time_scale_formula_result_pointer:add(5),
-function(args)
+
+local update_enemy_buff_on_minute = Packet.new("update_enemy_buff_on_minute")
+local add_classic_enemy_buff = function ()
     if not settings.classicEnemyBuffTimeScaling then
+        return
+    end
+    if not Ensure_Director_Active() then
+        return
+    end
+    --log.debug("after: " .. Director.enemy_buff)
+    if Director.enemy_buff <= old_enemy_buff then
         return
     end
 
 
-    -- diff_level and the index for that are both +1-ed because lua arrays start at 1 but not gamemaker ones
-    local current_run_diff_scale = Global.class_difficulty[Global.diff_level+1][9]
+
+    
     local value_to_add
-    if (Global.coop ~= 2) then
-        value_to_add = current_run_diff_scale
-    elseif (Global.host) then
-        -- dividing by 7.27 to get what are basically the RoR1 multiplayer difficulty values with support for modded difficulties
+    if Global.coop ~= 2 then
+        value_to_add = Current_Difficulty.diff_scale
+    else
+        -- dividing by 7.2727 to get what are basically the RoR1 multiplayer difficulty values with support for modded difficulties
         ---@diagnostic disable-next-line: missing-parameter
-        value_to_add = (current_run_diff_scale / 7.27) * gm.call("player_util_count_alive")
+        value_to_add = string.format(
+            "%.4f",
+            ---@diagnostic disable-next-line: missing-parameter
+            (Current_Difficulty.diff_scale / 7.2727) * gm.call("player_util_count_alive")
+        )
     end
 
 
     value_to_add = value_to_add * gm.trials_setting_get("difficulty_scaling_rate", 1)
-    --log.debug("value_to_add BEFORE is " .. args[1].value)
-    args[1].value = value_to_add
-    --log.debug("value_to_add AFTER is " .. args[1].value)
+    --log.debug("old_enemy_buff " .. old_enemy_buff)
+    --log.debug("value_to_add " .. value_to_add)
+    Director.enemy_buff = old_enemy_buff + value_to_add
+    --log.debug("true after: " .. Director.enemy_buff .. "\n")
+end
+
+
+
+update_enemy_buff_on_minute:set_serializers(
+function(buffer)
+end,
+
+function(buffer)
+    add_classic_enemy_buff()
 end)
 
 
-return false
+
+Callback.add(Callback.ON_SECOND,
+function (minute, second)
+    --log.debug("second " .. second)
+    --log.debug("minute " .. minute)
+    if second == 59 then
+        if not Ensure_Director_Active() then
+            return
+        end
+    
+    
+        old_enemy_buff = Director.enemy_buff
+        --log.debug("\nbefore: " .. old_enemy_buff)
+    elseif second == 0 and minute > 0 then
+        -- this doesn't run on ONLY the first time on clients?????? why???????
+        -- whatever i'll just network this manually idc
+        if Net.host then
+            update_enemy_buff_on_minute:send_to_all()
+            add_classic_enemy_buff()
+        end
+    end
+end)
