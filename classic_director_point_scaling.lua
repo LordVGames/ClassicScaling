@@ -1,4 +1,5 @@
 ---@diagnostic disable: undefined-field, param-type-mismatch, lowercase-global
+require("global_data.lua")
 local old_points = 0
 
 

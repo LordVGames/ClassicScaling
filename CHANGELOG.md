@@ -1,3 +1,7 @@
+## v2.0.5
+
+- Made global functions actually work
+
 ## v2.0.4
 
 - Internal refactor, replaced all mid hooks with normal hooks and a few callbacks

@@ -1,4 +1,5 @@
 ---@diagnostic disable: undefined-field, param-type-mismatch
+require("global_data.lua")
 local honor_elite_hp_reduction_multiplier = 0.9545
 local normal_elite_hp_reduction_multiplier = 0.9285
 local elite_damage_reduction_multiplier = 0.8947

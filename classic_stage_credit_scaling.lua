@@ -1,4 +1,5 @@
 ---@diagnostic disable: undefined-field, param-type-mismatch
+require("global_data.lua")
 
 
 

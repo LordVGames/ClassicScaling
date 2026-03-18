@@ -1,4 +1,6 @@
 ---@diagnostic disable: undefined-field, param-type-mismatch, lowercase-global
+require("global_data.lua")
+require("packets.lua")
 -- All hooks in here are in the function "gml_Object_oDirectorControl_Alarm_0"
 
 
@@ -7,8 +9,7 @@ local old_enemy_buff = 0
 
 
 
-local update_enemy_buff_on_minute = Packet.new("update_enemy_buff_on_minute")
-local add_classic_enemy_buff = function ()
+Add_classic_enemy_buff_time_scaling = function ()
     if not settings.classicEnemyBuffTimeScaling then
         return
     end
@@ -46,16 +47,6 @@ end
 
 
 
-update_enemy_buff_on_minute:set_serializers(
-function(buffer)
-end,
-
-function(buffer)
-    add_classic_enemy_buff()
-end)
-
-
-
 Callback.add(Callback.ON_SECOND,
 function (minute, second)
     --log.debug("second " .. second)
@@ -72,8 +63,8 @@ function (minute, second)
         -- this doesn't run on ONLY the first time on clients?????? why???????
         -- whatever i'll just network this manually idc
         if Net.host then
-            update_enemy_buff_on_minute:send_to_all()
-            add_classic_enemy_buff()
+            Update_enemy_buff_on_minute_packet:send_to_all()
+            Add_classic_enemy_buff_time_scaling()
         end
     end
 end)

@@ -1,4 +1,6 @@
 ---@diagnostic disable: undefined-field, param-type-mismatch
+require("global_data.lua")
+require("packets.lua")
 -- All hooks in here are in the function "gml_Script_stage_goto_next_gml_Object_oDirectorControl_Create_0"
 
 
@@ -33,7 +35,6 @@ local classic_enemy_buff_per_stage =
 
 
 
-local sync_classic_enemy_buff_packet = Packet.new("sync_classic_enemy_buff")
 -- have to check for specific stages in here beacause the memory hook is too early to get the new stage id
 -- this happens after our memory hook but it's STILL not late enough for the stage to actually change
 -- so the stage name/stages passed will be of the previous stage
@@ -84,33 +85,10 @@ function(self, other, result, args)
     end
 
     if Net.host then
-        sync_classic_enemy_buff_packet:send_to_all(old_enemy_buff, enemy_buff_add)
+        Sync_classic_enemy_buff_packet:send_to_all(old_enemy_buff, enemy_buff_add)
     end
 
     --log.debug("enemy_buff before: " .. Director.enemy_buff)
     Director.enemy_buff = old_enemy_buff + enemy_buff_add
     --log.debug("enemy_buff after: " .. Director.enemy_buff)
-end)
-
-
-
-sync_classic_enemy_buff_packet:set_serializers(
-function(buffer, old_enemy_buff, enemy_buff_add_value)
-    buffer:write_float(old_enemy_buff)
-    buffer:write_float(enemy_buff_add_value)
-end,
-
-function(buffer)
-    if not Ensure_Director_Active() then
-        log.error("CLIENT failed director check", 1)
-        return
-    end
-
-    local old_enemy_buff = buffer:read_float()
-    local enemy_buff_add = buffer:read_float()
-    --log.debug("CLIENT enemy_buff before: " .. Director.enemy_buff)
-    --log.debug("old_enemy_buff is  " .. old_enemy_buff)
-    --log.debug("enemy_buff_add is  " .. enemy_buff_add)
-    Director.enemy_buff = old_enemy_buff + enemy_buff_add
-    --log.debug("CLIENT enemy_buff after: " .. Director.enemy_buff)
 end)
